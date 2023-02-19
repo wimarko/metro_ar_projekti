@@ -16,17 +16,17 @@ public class SpawnableCubeController : MonoBehaviour
         
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    //Destroy(gameObject);
-    //    if (other.gameObject.CompareTag("Spawnable")) { Destroy(other.gameObject); }
-    //}
-
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         //Destroy(gameObject);
         if (other.gameObject.CompareTag("Spawnable")) { Destroy(other.gameObject); }
-
-
     }
+
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    //Destroy(gameObject);
+    //    if (other.gameObject.CompareTag("Spawnable")) { Destroy(other.gameObject); }
+
+
+    //}
 }
