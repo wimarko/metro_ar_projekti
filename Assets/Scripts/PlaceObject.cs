@@ -57,4 +57,7 @@ public class PlaceObject : MonoBehaviour
             }
         }
     }
+
+    //TODO
+    //valmista objketia jos painaa, sitä voi liikuttaa, eikä yritetä luoda sen paikall uutta objektia..
 }
