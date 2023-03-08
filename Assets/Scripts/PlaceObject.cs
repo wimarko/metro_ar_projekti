@@ -78,6 +78,7 @@ public class PlaceObject : MonoBehaviour
                             Pose pose = hit.pose;
                             GameObject obj =
                                 Instantiate(prefab, pose.position, pose.rotation);
+                            GameManager.Instance.ObjectPlaced();
                         }
                     }
                 }
@@ -109,8 +110,7 @@ public class PlaceObject : MonoBehaviour
                 RaycastHit hitObject;
 
                 if (Physics.Raycast(ray, out hitObject)) { }
-            }
-    
+            }   
         }
     }
 
