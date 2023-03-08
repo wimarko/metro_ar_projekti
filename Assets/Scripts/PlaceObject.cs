@@ -17,14 +17,21 @@ public class PlaceObject : MonoBehaviour
 
     private ARRaycastManager aRRaycastManager;
     private ARPlaneManager aRPlaneManager;
+    private GameObject selectedObj;
 
     private List<ARRaycastHit> aHitList = new List<ARRaycastHit>();
+    private Vector2 touchPos = default;
+    Camera camera;
    
    private void Awake()
     {
         aRRaycastManager= GetComponent<ARRaycastManager>();
 
         aRPlaneManager = GetComponent<ARPlaneManager>();
+    }
+    private void Start()
+    {
+        camera = Camera.main;
     }
 
     private void OnEnable()
@@ -47,17 +54,65 @@ public class PlaceObject : MonoBehaviour
     {
         if(finger.index != 0) { return; }
 
-        if(aRRaycastManager.Raycast(finger.currentTouch.screenPosition,
-                aHitList, TrackableType.PlaneWithinPolygon))
+        //otetaan kai eka (sormen)osuma
+        Touch touch = Input.GetTouch(0);
+        touchPos = touch.position;
+
+        if (touch.phase == TouchPhase.Began)
         {
-            foreach(ARRaycastHit hit in aHitList) {
-                Pose pose = hit.pose;
-                GameObject obj =
-                    Instantiate(prefab, pose.position, pose.rotation);
+            //ammutaan ray, että saadaan sijainti selville kameran suhteen
+            Ray ray = camera.ScreenPointToRay(touchPos);
+            RaycastHit hitObject;
+
+            //osuma
+            if (Physics.Raycast(ray, out hitObject)) {
+                //jos osutaan mutta EI OLE "Spawnable"-tagilla oleva objekti ..
+                if(!hitObject.collider.CompareTag("Spawnable"))
+                {
+                    // Niin sitten luodaan uusi objekti
+                    if (aRRaycastManager.Raycast(finger.currentTouch.screenPosition,
+               aHitList, TrackableType.PlaneWithinPolygon))
+                    {
+                        foreach (ARRaycastHit hit in aHitList)
+                        {
+                            Pose pose = hit.pose;
+                            GameObject obj =
+                                Instantiate(prefab, pose.position, pose.rotation);
+                        }
+                    }
+                }
+                //Jos osuttiin "Spawnable"-tagilliseen objektiin, niin sitten
+                //voidaan siirrellä sitä kunhan sormi on ruudussa kiinni
             }
+        }
+        //koodia jostain foorumilta/googlesta/youtubesta
+        //if(aRRaycastManager.Raycast(finger.currentTouch.screenPosition,
+        //        aHitList, TrackableType.PlaneWithinPolygon))
+        //{
+        //    //foreach(ARRaycastHit hit in aHitList) {
+        //    //    Pose pose = hit.pose;
+        //    //    GameObject obj =
+        //    //        Instantiate(prefab, pose.position, pose.rotation);
+        //    //}
+        //}
+    }
+
+    void Update()
+    {
+        if(Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            touchPos = touch.position;
+            if(touch.phase== TouchPhase.Began)
+            {
+                Ray ray =  camera.ScreenPointToRay(touchPos);
+                RaycastHit hitObject;
+
+                if (Physics.Raycast(ray, out hitObject)) { }
+            }
+    
         }
     }
 
-    //TODO
-    //valmista objketia jos painaa, sitä voi liikuttaa, eikä yritetä luoda sen paikall uutta objektia..
+    
 }
